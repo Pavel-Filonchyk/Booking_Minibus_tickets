@@ -7,7 +7,6 @@ import Footer from '../Footer/Footer'
 import ModalWrapper from '../../wrapers/ModalWrarrer/ModalWrapper'
 import { sendRoute } from '../../core/actions/getTravelsActions'
 import { postQueue, closePostSuccess } from '../../core/actions/restUserTravelActions'
-import { asyncStorage } from '../../constants'
 
 export default function Trips({ navigation }) {
     const dispatch = useDispatch()

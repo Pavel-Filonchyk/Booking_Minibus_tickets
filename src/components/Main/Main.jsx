@@ -1,55 +1,32 @@
 import { useEffect, useState, useLayoutEffect } from 'react'
 import { Text, View, StyleSheet, Image, Platform, TouchableOpacity, TextInput } from 'react-native';
 import { useSelector, useDispatch } from 'react-redux'
-import PhoneInput from "react-native-phone-number-input"
 import RNPickerSelect from 'react-native-picker-select'
 import RNDateTimePicker from '@react-native-community/datetimepicker'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import dayjs from 'dayjs'
 
-import { asyncStorage } from '../../constants/index'
 import { getAllTravels, getCosts, getDirections, getTravels } from '../../core/actions/getTravelsActions'
-import ModalWrapper from '../../wrapers/ModalWrarrer/ModalWrapper'
 import Footer from '../Footer/Footer'
 
 export default function Main({ navigation }) {
     const dispatch = useDispatch()
 
     const cities = useSelector(({getTravelsReducer: { cities }}) => cities)
-
     const [changeWay, setChangeWay] = useState(true)
     
     const [selectFrom, setSelectFrom] = useState("Туров")
     const [selectTo, setSelectTo] = useState("Гомель")
     const [showDate, setShowDate] = useState(false)
     const [date, setDate] = useState(new Date())
-
-    // modal auth
-    const [fullName, setFullName] = useState('Pavel')
-    const [phoneNumber, setPhoneNumber] = useState('+37500')
-    const [getCode, setGetCode] = useState(false)
-    const [code, setCode] = useState('')
-    const [showModal, setShowModal] = useState(true)
-
-    useLayoutEffect(() => {
-        const getItemStorage = async () => {
-            try {
-                const value = await AsyncStorage.getItem('auth')
-                if(value !== null) {
-                    setShowModal(false)
-                    return value
-                }
-            } catch(e) {
-                console.log(e)
-            }
-        }
-        getItemStorage()
-    }, [])
     
+    const [rerender, setRerender] = useState(false)
+    const forceUpdate = () => setRerender(!rerender)
     useEffect(() => {
         dispatch(getAllTravels())
         dispatch(getDirections())
         dispatch(getCosts())
+        forceUpdate()
     }, [])
 
     useEffect(() => {
@@ -65,17 +42,6 @@ export default function Main({ navigation }) {
         }
         
     }, [changeWay])
-
-    const onConfirmCode = async () => {
-        try {
-            const jsonValue = JSON.stringify({fullName, phoneNumber})
-            await AsyncStorage.setItem('auth', jsonValue)
-        } catch (e) {
-            console.log(e)
-        }
-        setGetCode(false)
-        setShowModal(false)
-    }
 
     const onChangeDate = (event, selectedDate) => {
         const currentDate = selectedDate || date
@@ -191,61 +157,6 @@ export default function Main({ navigation }) {
                     <Text style={styles.textBtnShowTrip}>Посмотреть рейсы</Text>
                 </TouchableOpacity>
             </View>
-
-            <ModalWrapper showModal={showModal}>
-                <View style={styles.wrapModal}>
-                    <View style={styles.wrapTitle}>
-                        <Text style={styles.title}>РЕГИСТРАЦИЯ</Text>
-                    </View>
-                    
-                    <Text style={styles.label}>Введите имя и фамилию</Text>
-                    <TextInput
-                        style={styles.textInput}
-                        onChangeText={(e) => setFullName(e)}
-                        value={fullName}
-                    />
-                    <Text style={styles.label}>Телефон</Text>
-                    <PhoneInput
-                        defaultValue={phoneNumber}
-                        defaultCode="BY"
-                        onChangeFormattedText={(number) => {
-                            setPhoneNumber(number)
-                        }}
-                        placeholder=' '
-                        containerStyle={{height: 45, width: '90%', borderRadius: 6, textAlign: 'center'}}
-                        textInputStyle={{fontSize: 14, fontWeight: '800', color:'#1B5583'}}
-                        codeTextStyle={{fontSize: 14, fontWeight: '800', color:'#1B5583'}}
-                    
-                    />
-                     <Text style={styles.label}>Введите полученный код</Text>
-                    <TextInput
-                        style={styles.textInput}
-                        onChangeText={(e) => setCode(e)}
-                        value={code}
-                    />
-                    <View style={styles.wrapBtns}>
-                        {
-                            !getCode
-                            ?  
-                                <TouchableOpacity
-                                    style={styles.btnAuth}
-                                    onPress={() => setGetCode(true)}
-                                >
-                                    <Text style={styles.textBtnAuth}>Получить код</Text>
-                                </TouchableOpacity>
-                            
-                            :   
-                                <TouchableOpacity
-                                    style={styles.btnAuth}
-                                    onPress={() => onConfirmCode()}
-                                >
-                                    <Text style={styles.textBtnAuth}>Подтвердить</Text>
-                                </TouchableOpacity>
-    
-                        }
-                    </View>
-                </View>
-            </ModalWrapper>
 
             <Footer
                navigation={navigation} 
@@ -387,57 +298,6 @@ const styles = StyleSheet.create({
     textBtnShowTrip: {
         color: "white",
         fontSize: 18,
-        fontWeight: '900'
-    },
-
-    // modal
-    wrapModal: {
-        height: '100%',
-        width: '100%',
-        justifyContent: 'space-between',
-        padding: 18
-    },
-    wrapTitle: {
-        width: '100%',
-        alignItems: 'center'
-    },
-    title: {
-        fontSize: 18,
-        color: 'white',
-        fontWeight: '800',
-    },
-    label: {
-        fontSize: 16,
-        color: 'white',
-        fontWeight: '800',
-        marginTop: 14
-    },
-    textInput: {
-        height: 30, 
-        width: '100%',
-        borderColor: 'white', 
-        borderBottomWidth: 2,
-        fontSize: 16,
-        color: 'white',
-        fontWeight: '800'
-    },
-    wrapBtns: {
-        width: '90%',
-        marginTop: 20,
-        flexDirection: 'row',
-        justifyContent: 'center'
-    },
-    btnAuth: {
-        width: 168,
-        height: 40,
-        borderRadius: 8,
-        backgroundColor: 'green',
-        justifyContent: 'center',
-        alignItems: 'center',
-    },
-    textBtnAuth: {
-        fontSize: 18,
-        color: "white",
         fontWeight: '900'
     },
 })

@@ -2,10 +2,10 @@ import { useEffect, useState } from 'react'
 import { View, Text, StyleSheet, TouchableOpacity, Image } from 'react-native';
 import { useSelector, useDispatch } from 'react-redux'
 import RNPickerSelect from 'react-native-picker-select'
+import AsyncStorage from '@react-native-async-storage/async-storage'
 import uuid from 'react-uuid' 
 
 import Footer from '../Footer/Footer'
-import { asyncStorage } from '../../constants/index'
 import { sendUser } from '../../core/actions/restUserTravelActions'
 
 export default function Order({ navigation }) {
@@ -19,7 +19,7 @@ export default function Order({ navigation }) {
     const fullName = useSelector(({authReducer: { fullName }}) => fullName)
     const phoneNumber = useSelector(({authReducer: { phoneNumber }}) => phoneNumber)
     const [userData, setUserData] = useState('')
-
+   
     const [wayStart, setSelectWayStart] = useState("")
     const [wayStop, setSelectWayStop] = useState("")
     const [numberSeats, setNumberSeats] = useState(1)
@@ -42,7 +42,18 @@ export default function Order({ navigation }) {
         } 
     }
     useEffect(() => {
-        setUserData(asyncStorage({key: 'getItem'}))
+       const getData = async () => {
+            try {
+              const value = await AsyncStorage.getItem('auth')
+              const jsonValue = JSON.parse(value)
+              if(value !== null) {
+                setUserData({phoneNumber: jsonValue?.phoneNumber, fullName: jsonValue?.fullName})
+              }
+            } catch(e) {
+              console.log(e)
+            }
+        }
+        getData()
     }, [])
     const onSendOrder = () => {
         if (!wayStart || !wayStop) {

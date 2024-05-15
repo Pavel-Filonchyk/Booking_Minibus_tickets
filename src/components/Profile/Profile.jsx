@@ -1,12 +1,12 @@
 import { useEffect, useState } from 'react'
 import { View, Text, StyleSheet, TouchableOpacity, Image, TextInput, ScrollView } from 'react-native'
 import { useSelector, useDispatch } from 'react-redux'
+import AsyncStorage from '@react-native-async-storage/async-storage'
 import PhoneInput from "react-native-phone-number-input"
 import _ from 'lodash'
 
 import Footer from '../Footer/Footer'
 import { authData } from '../../core/actions/authActions'
-import { asyncStorage } from '../../constants'
 import { getUser, deleteUser, getQueue, deleteQueue } from '../../core/actions/restUserTravelActions'
 
 export default function Profile({ navigation }) {
@@ -16,19 +16,29 @@ export default function Profile({ navigation }) {
     const allTravels = useSelector(({getTravelsReducer: { allTravels }}) => allTravels)
     const getUserData = useSelector(({restUserTravelReduser: { getUserData }}) => getUserData)
     const userQueue = useSelector(({restUserTravelReduser: { userQueue }}) => userQueue)
- 
-    const [userData, setUserData] = useState('')
+
     const [choiceSettings, setChoiceSettings] = useState(true)
 
     // settings
-    const [fullName, setFullName] = useState(userData?.fullName)
-    const [phoneNumber, setPhoneNumber] = useState(userData?.phoneNumber)
-
+    const [fullName, setFullName] = useState('')
+    const [phoneNumber, setPhoneNumber] = useState('')
+  
     useEffect(() => {
-        setUserData(asyncStorage({key: 'getItem'}))
-        //dispatch(getUser({phoneNumber: asyncStorage({key: 'getItem'})?.phoneNumber, allTravels}))
-        dispatch(getUser({phoneNumber: asyncStorage({key: 'getItem'})?.phoneNumber}))
-        dispatch(getQueue({phoneNumber: asyncStorage({key: 'getItem'})?.phoneNumber}))
+        const getData = async () => {
+            try {
+              const value = await AsyncStorage.getItem('auth')
+              const jsonValue = JSON.parse(value)
+              if(value !== null) {
+                dispatch(getUser({phoneNumber: jsonValue?.phoneNumber}))
+                dispatch(getQueue())
+                setPhoneNumber(jsonValue?.phoneNumber)
+                setFullName(jsonValue?.fullName)
+              }
+            } catch(e) {
+              console.log(e)
+            }
+        }
+        getData()
     }, [])
 
     const onSettings = (arg) => {
@@ -60,7 +70,7 @@ export default function Profile({ navigation }) {
             </View>
             
             <View style={styles.wrapHeader}>
-                <Text style={styles.name}>{userData?.fullName}</Text>
+                <Text style={styles.name}>{fullName}</Text>
                 <View style={styles.wrapChoiceSettings}>
                     <TouchableOpacity style={{ marginTop: 20, marginBottom: 15, borderBottomWidth: 2, borderBottomColor: choiceSettings ? 'red' : 'white'}}
                         onPress={() => onSettings('booking')}
@@ -210,7 +220,7 @@ export default function Profile({ navigation }) {
                                 style={styles.inputFullName}
                                 onChangeText={(e) => setFullName(e)}
                                 value={fullName}
-                                placeholder={userData?.fullName}
+                                placeholder={fullName}
                                 placeholderTextColor="white"
                             />
                             <Text style={styles.label}>Телефон</Text>
@@ -218,7 +228,7 @@ export default function Profile({ navigation }) {
                                 style={styles.inputFullName}
                                 onChangeText={(e) => setPhoneNumber(e)}
                                 value={phoneNumber}
-                                placeholder={userData?.phoneNumber}
+                                placeholder={phoneNumber}
                                 placeholderTextColor="white"
                             />
                         </View>

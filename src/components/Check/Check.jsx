@@ -17,6 +17,7 @@ export default function Check({ navigation }) {
     const phoneNumber = useSelector(({authReducer: { phoneNumber }}) => phoneNumber)
     
     const [showModal, setShowModal] = useState(false)
+   
 
     useEffect(() => {
         if(postSuccess !== null){
@@ -32,6 +33,7 @@ export default function Check({ navigation }) {
     const onPostUserTravel = () => {
         dispatch(postUser())
         setShowModal
+        
     }
 
     return (
@@ -122,7 +124,7 @@ export default function Check({ navigation }) {
                                 <Text style={styles.textModal}>Попробуйте снова</Text>
                                 <AntDesign name="frowno" size={48} color="white" style={{marginTop: 20}} />
                             </>
-                        :   ''//<Text style={styles.textModal}>NULL</Text>
+                        :   ''
                     }
                 </View>
             </ModalWrapper>

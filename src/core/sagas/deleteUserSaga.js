@@ -8,9 +8,9 @@ function* workerLoader() {
     const blockId = yield select(state => state.restUserTravelReduser.blockIdDelete)
 
     try {
-        //const { data } = yield call(httpProvider.put, travelUrl(blockId), {data: deleteUserData})
+        const { data } = yield call(httpProvider.put, travelUrl(blockId), {data: deleteUserData})
     
-        //yield put(deleteUserSuccess(data))
+        yield put(deleteUserSuccess(data))
       } catch (error) {
         yield put(console.log(error))
       }

@@ -8,7 +8,7 @@ import Trips from './src/components/Trips/Trips'
 import Order from './src/components/Order/Order'
 import Check from './src/components/Check/Check'
 import Profile from './src/components/Profile/Profile'
-//import Auth from './src/components/Auth/Auth'
+import Auth from './src/components/Auth/Auth'
 
 const Stack = createNativeStackNavigator()
 
@@ -17,8 +17,8 @@ export default function App() {
   return (
     <Provider store={store}>
       <NavigationContainer>
-        <Stack.Navigator initialRouteName="main">
-          {/* <Stack.Screen name="auth" component={Auth} options={{ headerShown: false }}/> */}
+        <Stack.Navigator initialRouteName="auth">
+          <Stack.Screen name="auth" component={Auth} options={{ headerShown: false }}/>
           <Stack.Screen name="profile" component={Profile} options={{ headerShown: false }}/>
           <Stack.Screen name="main" component={Main} options={{ headerShown: false }}/>
           <Stack.Screen name="trips" component={Trips} options={{ headerShown: false }}/>
