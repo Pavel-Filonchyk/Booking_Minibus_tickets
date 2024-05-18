@@ -6,22 +6,29 @@ import PhoneInput from "react-native-phone-number-input"
 import _ from 'lodash'
 
 import Footer from '../Footer/Footer'
-import { authData } from '../../core/actions/authActions'
 import { getUser, deleteUser, getQueue, deleteQueue } from '../../core/actions/restUserTravelActions'
+import { sendCodeData, resetErrorCode } from '../../core/actions/authActions'
 
 export default function Profile({ navigation }) {
 
     const dispatch = useDispatch() 
 
-    const allTravels = useSelector(({getTravelsReducer: { allTravels }}) => allTravels)
     const getUserData = useSelector(({restUserTravelReduser: { getUserData }}) => getUserData)
     const userQueue = useSelector(({restUserTravelReduser: { userQueue }}) => userQueue)
 
     const [choiceSettings, setChoiceSettings] = useState(true)
 
     // settings
+    const getCode = useSelector(({authReducer: { getCode }}) => getCode)
+    const errorCode = useSelector(({authReducer: { errorCode }}) => errorCode)
+
     const [fullName, setFullName] = useState('')
-    const [phoneNumber, setPhoneNumber] = useState('')
+    const [phoneNumber, setPhoneNumber] = useState(null)
+    const [createCode, setCreateCode] = useState(null)
+    const [writeCode, setWriteCode] = useState('')
+    const [showBtn, setShowBtn] = useState(false)
+    const [errorTextPhone, setErrorTextPhone] = useState(false)
+    const [errorTextCode, setErrorTextCode] = useState(false)
   
     useEffect(() => {
         const getData = async () => {
@@ -31,7 +38,6 @@ export default function Profile({ navigation }) {
               if(value !== null) {
                 dispatch(getUser({phoneNumber: jsonValue?.phoneNumber}))
                 dispatch(getQueue())
-                setPhoneNumber(jsonValue?.phoneNumber)
                 setFullName(jsonValue?.fullName)
               }
             } catch(e) {
@@ -55,9 +61,46 @@ export default function Profile({ navigation }) {
     const onDeleteQueue = (blockId) => {
         dispatch(deleteQueue(blockId))
     }
-    const onChoiceDataUser = () => {
-        //dispatch(authData({fullName: choiceFullName, phoneNumber: choicePhoneNumber}))
-        //asyncStorage({key: 'setItem', value: {fullName, phoneNumber}})
+    
+    // settings 
+    useEffect(() => {
+        if (createCode !== null) {
+            dispatch(sendCodeData({code: createCode.toString(), phoneNumber: `+375${phoneNumber}`}))
+        }
+    }, [createCode])
+    useEffect(() => {
+        if(getCode === true) {
+            setShowBtn(item => !item)
+        }
+    }, [getCode])
+
+    const onSendCode = () => {
+        if(phoneNumber !== null){
+            dispatch(resetErrorCode())
+            setCreateCode(Math.floor(Math.random() * (9999 - 1000 + 1)) + 1000)
+            setErrorTextPhone(false)
+        }else{
+            setErrorTextPhone(true)
+        }
+    }
+    const onConfirmCode = async () => {
+        if (createCode.toString() === writeCode.toString()){
+            try {
+                const jsonValue = JSON.stringify({fullName, phoneNumber: `+375${phoneNumber}`})
+                await AsyncStorage.setItem('auth', jsonValue)
+            } catch (e) {
+                console.log(e)
+            }
+
+            setShowBtn(item => !item)
+            setErrorTextCode(false)
+            setCreateCode(null)
+            setPhoneNumber(null)
+            setWriteCode('')
+        }
+        if (createCode.toString() !== writeCode.toString()){
+            setErrorTextCode(true)
+        }
     }
  
     return (
@@ -224,21 +267,50 @@ export default function Profile({ navigation }) {
                                 placeholderTextColor="white"
                             />
                             <Text style={styles.label}>Телефон</Text>
+                            <View style={styles.wrapPhoneNumber}>
+                                <Text style={styles.textPhoneNumber}>+375</Text>
+                                <TextInput
+                                    //keyboardType="numeric"
+                                    style={styles.phoneInput}
+                                    onChangeText={(e) => setPhoneNumber(e)}
+                                    value={phoneNumber}
+                                />
+                            </View>
+                        </View>
+                        <View style={styles.wrapTextInput}>
+                            <Text style={styles.label}>Введите полученный код,</Text>
+                            <Text style={styles.label}>чтобы подтвердить изменения</Text>
                             <TextInput
-                                style={styles.inputFullName}
-                                onChangeText={(e) => setPhoneNumber(e)}
-                                value={phoneNumber}
-                                placeholder={phoneNumber}
-                                placeholderTextColor="white"
+                                style={styles.textInput}
+                                onChangeText={(e) => setWriteCode(e)}
+                                value={writeCode}
                             />
                         </View>
+                        
+                        <Text style={{...textError, display: errorTextPhone ? 'flex' : 'none'}}>Необходимо заполнить поле номера телефона</Text>
+                        <Text style={{...textError, display: errorCode ? 'flex' : 'none'}}>Проверьте номер телефона</Text>
+                        <Text style={{...textError, display: errorTextCode ? 'flex' : 'none'}}>Неверно введен код</Text>
+                        
                         <View style={styles.wrapBtns}>
-                            <TouchableOpacity
-                                style={styles.btnBack}
-                                onPress={() => onChoiceDataUser()}
-                            >
-                                <Text style={styles.textBtnOrder}>Изменить</Text>
-                            </TouchableOpacity>
+                            {
+                                !showBtn 
+                                ?  
+                                    <TouchableOpacity
+                                        style={styles.btnAuth}
+                                        onPress={onSendCode}
+                                    >
+                                        <Text style={styles.textBtnOrder}>Получить код</Text>
+                                    </TouchableOpacity>
+                                
+                                :   
+                                    <TouchableOpacity
+                                        style={styles.btnAuth}
+                                        onPress={() => onConfirmCode()}
+                                    >
+                                        <Text style={styles.textBtnOrder}>Подтвердить</Text>
+                                    </TouchableOpacity>
+
+                            }
                         </View>
                     </View>
             }
@@ -348,8 +420,6 @@ const styles = StyleSheet.create({
         color: 'white',
         fontWeight: '800'
     },
-
-
     blockCheck: {
         flexDirection: 'row',
         marginLeft: 10,
@@ -432,7 +502,48 @@ const styles = StyleSheet.create({
         color: 'white',
         fontWeight: '800'
     },
-
+    wrapTextInput: {
+        marginTop: 10,
+        alignItems: 'center',
+        width: '90%'
+    },
+    wrapPhoneNumber: {
+        maxWidth: '100%',
+        flexDirection: 'row',
+        overflow: 'hidden'
+    },
+    textPhoneNumber: {
+        fontSize: 16,
+        color: 'white',
+        fontWeight: '800',
+        width: 55
+    },
+    phoneInput: {
+        width: '100%',
+        borderColor: 'white', 
+        borderBottomWidth: 2,
+        fontSize: 16,
+        color: 'white',
+        fontWeight: '800',
+    },
+    textInput: {
+        height: 30, 
+        width: '50%',
+        borderColor: 'white', 
+        borderBottomWidth: 2,
+        fontSize: 16,
+        color: 'white',
+        fontWeight: '800',
+        marginTop: 10
+    },
+    btnAuth: {
+        width: 168,
+        height: 40,
+        borderRadius: 8,
+        backgroundColor: '#008080',
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
 })
 
 const textWithoutBooking = StyleSheet.create({
@@ -444,5 +555,11 @@ const textWithoutBooking = StyleSheet.create({
     marginRight: 'auto',
     marginBottom: 30,
     fontWeight: '800'
+})
+const textError = StyleSheet.create({
+    color: 'red',
+    marginTop: 20,
+    fontWeight: '800',
+    fontSize: 16
 })
 

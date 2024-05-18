@@ -94,6 +94,11 @@ const restUserTravelReduser = (state = initialState, action) => {
                 getUserData,
                 travels: list
             }
+        case 'GET_USER_ERROR':
+            console.log(action.payload)
+            return {
+                ...state,
+            }
         case 'DELETE_USER':
             const blockIdDelete = action.payload?.blockId
             const id = action.payload?.id
@@ -151,6 +156,11 @@ const restUserTravelReduser = (state = initialState, action) => {
             return {
                 ...state,
                 userQueue: findUserQueue
+            }
+        case 'GET_QUEUE_ERROR':
+            console.log(action.payload)
+            return {
+                ...state,
             }
         case 'DELETE_QUEUE':
             const deleteQueue = state.userQueue?.filter(item => item.blockId !== action.payload)

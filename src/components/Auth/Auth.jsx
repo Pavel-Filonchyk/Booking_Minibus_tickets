@@ -1,16 +1,24 @@
 import { useEffect, useState, useLayoutEffect } from 'react'
 import { View, Text, StyleSheet, TouchableOpacity, Image, TextInput } from 'react-native'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import AsyncStorage from '@react-native-async-storage/async-storage'
+
+import { sendCodeData, resetErrorCode } from '../../core/actions/authActions'
 
 export default function Auth({ navigation }) {
     
     const dispatch = useDispatch()
 
-    const [fullName, setFullName] = useState('Pavel')
-    const [phoneNumber, setPhoneNumber] = useState('')
-    const [getCode, setGetCode] = useState(false)
-    const [code, setCode] = useState('')
+    const getCode = useSelector(({authReducer: { getCode }}) => getCode)
+    const errorCode = useSelector(({authReducer: { errorCode }}) => errorCode)
+
+    const [fullName, setFullName] = useState('')
+    const [phoneNumber, setPhoneNumber] = useState(null)
+    const [createCode, setCreateCode] = useState(null)
+    const [writeCode, setWriteCode] = useState('')
+    const [showBtn, setShowBtn] = useState(false)
+    const [errorTextPhone, setErrorTextPhone] = useState(false)
+    const [errorTextCode, setErrorTextCode] = useState(false)
 
     useLayoutEffect(() => {
         const getItemStorage = async () => {
@@ -27,14 +35,42 @@ export default function Auth({ navigation }) {
         getItemStorage()
     }, [])
 
-    const onConfirmCode = async () => {
-        try {
-            const jsonValue = JSON.stringify({fullName, phoneNumber: `+375${phoneNumber}`})
-            await AsyncStorage.setItem('auth', jsonValue)
-        } catch (e) {
-            console.log(e)
+    useEffect(() => {
+        if (createCode !== null) {
+            dispatch(sendCodeData({code: createCode.toString(), phoneNumber: `+375${phoneNumber}`}))
         }
-        setGetCode(false)
+    }, [createCode])
+    useEffect(() => {
+        if(getCode === true) {
+            setShowBtn(item => !item)
+        }
+    }, [getCode])
+
+    const onSendCode = () => {
+        if(phoneNumber !== null){
+            dispatch(resetErrorCode())
+            setCreateCode(Math.floor(Math.random() * (9999 - 1000 + 1)) + 1000)
+            setErrorTextPhone(false)
+        }else{
+            setErrorTextPhone(true)
+        }
+    }
+    const onConfirmCode = async () => {
+        if (createCode.toString() === writeCode.toString()){
+            try {
+                const jsonValue = JSON.stringify({fullName, phoneNumber: `+375${phoneNumber}`})
+                await AsyncStorage.setItem('auth', jsonValue)
+            } catch (e) {
+                console.log(e)
+            }
+
+            setShowBtn(item => !item)
+            setErrorTextCode(false)
+            setCreateCode(null)
+        }
+        if (createCode.toString() !== writeCode.toString()){
+            setErrorTextCode(true)
+        }
     }
 
     return (
@@ -53,6 +89,7 @@ export default function Auth({ navigation }) {
                 <View style={styles.wrapPhoneNumber}>
                     <Text style={styles.textPhoneNumber}>+375</Text>
                     <TextInput
+                        //keyboardType="numeric"
                         style={styles.phoneInput}
                         onChangeText={(e) => setPhoneNumber(e)}
                         value={phoneNumber}
@@ -73,16 +110,21 @@ export default function Auth({ navigation }) {
                 <Text style={styles.label}>Введите полученный код</Text>
                 <TextInput
                     style={styles.textInput}
-                    onChangeText={(e) => setCode(e)}
-                    value={code}
+                    onChangeText={(e) => setWriteCode(e)}
+                    value={writeCode}
                 />
+    
+                <Text style={{...textError, display: errorTextPhone ? 'flex' : 'none'}}>Необходимо заполнить поле номера телефона</Text>
+                <Text style={{...textError, display: errorCode ? 'flex' : 'none'}}>Проверьте номер телефона</Text>
+                <Text style={{...textError, display: errorTextCode ? 'flex' : 'none'}}>Неверно введен код</Text>
+                
                 <View style={styles.wrapBtns}>
                     {
-                        !getCode
+                        !showBtn 
                         ?  
                             <TouchableOpacity
                                 style={styles.btnAuth}
-                                onPress={() => setGetCode(true)}
+                                onPress={onSendCode}
                             >
                                 <Text style={styles.textBtnAuth}>Получить код</Text>
                             </TouchableOpacity>
@@ -181,4 +223,11 @@ const styles = StyleSheet.create({
         color: "white",
         fontWeight: '900'
     },
+})
+
+const textError = StyleSheet.create({
+    color: 'red',
+    marginTop: 20,
+    fontWeight: '800',
+    fontSize: 16
 })

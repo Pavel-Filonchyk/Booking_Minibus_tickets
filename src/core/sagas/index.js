@@ -9,6 +9,8 @@ import watcherGetUser from './getUserSaga'
 import watcherPostQueue from './postQueueSaga'
 import watcherGetQueue from './getQueueSaga'
 import watcherDeleteQueue from './deleteQueueSaga'
+import watcherGetCode from './getCodeSaga'
+import watcherPostMessage from './postMessageSaga'
 
 export default function* rootSaga() {
     yield all([
@@ -20,6 +22,8 @@ export default function* rootSaga() {
         watcherDeleteUser(),
         watcherPostQueue(),
         watcherGetQueue(),
-        watcherDeleteQueue()
+        watcherDeleteQueue(),
+        watcherGetCode(),
+
     ])
 }

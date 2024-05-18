@@ -1,5 +1,5 @@
 import { takeEvery, put, call } from 'redux-saga/effects'
-import { GET_QUEUE, getQueueSuccess } from '../actions/restUserTravelActions'
+import { GET_QUEUE, getQueueSuccess, getQueueError } from '../actions/restUserTravelActions'
 import httpProvider from '../../common/httpProvider'
 import { QUEUES_URL } from '../../common/api'
 
@@ -9,7 +9,7 @@ function* workerLoader() {
     
         yield put(getQueueSuccess(data))
       } catch (error) {
-        yield put(console.log(error))
+        yield put(getQueueError(error))
       }
   }
 

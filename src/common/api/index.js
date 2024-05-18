@@ -23,3 +23,5 @@ export const QUEUES_URL = 'https://minibus-travel-default-rtdb.europe-west1.fire
 export const queuesUrl = (index) => {
     return `https://minibus-travel-default-rtdb.europe-west1.firebasedatabase.app/queues/${index}.json`
 }
+
+export const AUTH_URL = 'https://app.sms.by/api/v1/sendQuickSMS'
