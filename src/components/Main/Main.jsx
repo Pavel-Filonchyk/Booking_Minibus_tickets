@@ -234,8 +234,9 @@ const styles = StyleSheet.create({
     },
     touchArrow: {
         width: 30,
-        height: 36,
+        height: 50,
         position: 'absolute',
+        zIndex: 10,
         right: 8,
         ...Platform.select({
             ios: {

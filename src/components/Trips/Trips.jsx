@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { View, Text, StyleSheet, TouchableOpacity, Image, ScrollView } from 'react-native';
 import { useSelector, useDispatch } from 'react-redux'
 import AntDesign from '@expo/vector-icons/AntDesign'
+import AsyncStorage from '@react-native-async-storage/async-storage'
 
 import Footer from '../Footer/Footer'
 import ModalWrapper from '../../wrapers/ModalWrarrer/ModalWrapper'
@@ -16,8 +17,23 @@ export default function Trips({ navigation }) {
     const getError = useSelector(({getTravelsReducer: { getError }}) => getError)
     const postQueueSuccess = useSelector(({restUserTravelReduser: { postQueueSuccess }}) => postQueueSuccess )
     
+    const [userData, setUserData] = useState('')
     const [showModal, setShowModal] = useState(false)
 
+    useEffect(() => {
+        const getData = async () => {
+             try {
+                const value = await AsyncStorage.getItem('auth')
+                const jsonValue = JSON.parse(value)
+                if(value !== null) {
+                    setUserData({phoneNumber: jsonValue?.phoneNumber, fullName: jsonValue?.fullName})
+                }
+            } catch(e) {
+                console.log(e)
+            }
+         }
+         getData()
+     }, [])
     useEffect(() => {
         if (postQueueSuccess !== null){
             setShowModal(true)
@@ -36,9 +52,7 @@ export default function Trips({ navigation }) {
     }
     const onPostQueue = (dataTrip) => {
         dispatch(postQueue({
-            ...dataTrip, 
-            phoneNumber: asyncStorage({key: 'getItem'})?.phoneNumber, 
-            fullName: asyncStorage({key: 'getItem'})?.fullName
+            ...dataTrip, phoneNumber: userData?.phoneNumber
         }))
     }
    

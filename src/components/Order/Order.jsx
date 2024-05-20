@@ -16,8 +16,8 @@ export default function Order({ navigation }) {
     const choiceRoutes = useSelector(({getTravelsReducer: { choiceRoutes }}) => choiceRoutes)
     const costs = useSelector(({getTravelsReducer: { costs }}) => costs)
 
-    const fullName = useSelector(({authReducer: { fullName }}) => fullName)
-    const phoneNumber = useSelector(({authReducer: { phoneNumber }}) => phoneNumber)
+    //const fullName = useSelector(({authReducer: { fullName }}) => fullName)
+    //const phoneNumber = useSelector(({authReducer: { phoneNumber }}) => phoneNumber)
     const [userData, setUserData] = useState('')
    
     const [wayStart, setSelectWayStart] = useState("")

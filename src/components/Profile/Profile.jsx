@@ -287,7 +287,7 @@ export default function Profile({ navigation }) {
                             />
                         </View>
                         
-                        <Text style={{...textError, display: errorTextPhone ? 'flex' : 'none'}}>Необходимо заполнить поле номера телефона</Text>
+                        <Text style={{...textError, display: errorTextPhone ? 'flex' : 'none'}}>Заполните поле номера телефона</Text>
                         <Text style={{...textError, display: errorCode ? 'flex' : 'none'}}>Проверьте номер телефона</Text>
                         <Text style={{...textError, display: errorTextCode ? 'flex' : 'none'}}>Неверно введен код</Text>
                         

@@ -28,7 +28,8 @@ const authReducer = (state = initialState, action) => {
         case 'RESET_ERROR_CODE':
             return {
                 ...state,
-                errorCode: null
+                errorCode: null,
+                getCode: null
             }
 
         case 'POST_MESSAGE_SUCCESS':
