@@ -3,7 +3,6 @@ import { Text, View, StyleSheet, Image, Platform, TouchableOpacity, TextInput } 
 import { useSelector, useDispatch } from 'react-redux'
 import RNPickerSelect from 'react-native-picker-select'
 import RNDateTimePicker from '@react-native-community/datetimepicker'
-import AsyncStorage from '@react-native-async-storage/async-storage'
 import dayjs from 'dayjs'
 
 import { getAllTravels, getCosts, getDirections, getTravels } from '../../core/actions/getTravelsActions'

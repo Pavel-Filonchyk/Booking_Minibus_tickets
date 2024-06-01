@@ -15,14 +15,14 @@ export default function Footer({ navigation }) {
         <View style={styles.footer}>
             <View style={{display: showPhone ? 'flex' : 'none', width: '100%', alignItems: 'center', position: 'absolute', bottom: 50, backgroundColor: '#1B5583'}}>
                 <TouchableOpacity
-                    onPress={() => Linking.openURL(Platform.OS !== 'android' ? 'telprompt:+375295826000' : 'tel:+375295826000')}
+                    onPress={() => Linking.openURL(Platform.OS !== 'android' ? 'telprompt:+375259802774' : 'tel:+375259802774')}
                 >
-                    <Text style={styles.phoneNumber}>MTS +375(29)582-6000</Text>
+                    <Text style={styles.phoneNumber}>Life +375(25)980-2774</Text>
                 </TouchableOpacity>
                 <TouchableOpacity
-                    onPress={() => Linking.openURL(Platform.OS !== 'android' ? 'telprompt:+375445826000' : 'tel:+375445826000')}
+                    onPress={() => Linking.openURL(Platform.OS !== 'android' ? 'telprompt:+375259802774' : 'tel:+375259802774')}
                 >
-                    <Text style={styles.phoneNumber}>A1 +375(44)582-6000</Text>
+                    <Text style={styles.phoneNumber}>Life +375(25)980-2774</Text>
                 </TouchableOpacity>
             </View>
             <View style={styles.panelFooter}>

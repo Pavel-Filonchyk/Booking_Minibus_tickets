@@ -89,24 +89,11 @@ export default function Auth({ navigation }) {
                 <View style={styles.wrapPhoneNumber}>
                     <Text style={styles.textPhoneNumber}>+375</Text>
                     <TextInput
-                        //keyboardType="numeric"
                         style={styles.phoneInput}
                         onChangeText={(e) => setPhoneNumber(e)}
                         value={phoneNumber}
                     />
                 </View>
-                {/* <PhoneInput
-                    defaultValue={phoneNumber}
-                    defaultCode='BY'
-                    onChangeFormattedText={(number) => {
-                        setPhoneNumber(number)
-                    }}
-                    placeholder=' '
-                    containerStyle={{height: 45, width: '90%', borderRadius: 6, textAlign: 'center'}}
-                    textInputStyle={{fontSize: 14, fontWeight: '800', color:'#1B5583'}}
-                    codeTextStyle={{fontSize: 14, fontWeight: '800', color:'#1B5583'}}
-                
-                /> */}
                 <Text style={styles.label}>Введите полученный код</Text>
                 <TextInput
                     style={styles.textInput}
@@ -139,6 +126,10 @@ export default function Auth({ navigation }) {
 
                     }
                 </View>
+                <Text style={styles.entrance}
+                    onPress={() => navigation.navigate('main')}
+                >Вход без регистрации
+                </Text>
             </View>
         </View>
     )
@@ -192,7 +183,8 @@ const styles = StyleSheet.create({
         fontSize: 16,
         color: 'white',
         fontWeight: '800',
-        marginTop: 10
+        marginTop: 10,
+        paddingLeft: 5
     },
     textInput: {
         height: 30, 
@@ -202,7 +194,8 @@ const styles = StyleSheet.create({
         fontSize: 16,
         color: 'white',
         fontWeight: '800',
-        marginTop: 10
+        marginTop: 10,
+        textAlign: 'center'
     },
     wrapBtns: {
         width: '100%',
@@ -223,6 +216,15 @@ const styles = StyleSheet.create({
         color: "white",
         fontWeight: '900'
     },
+    entrance: {
+        fontSize: 16,
+        color: 'white',
+        fontWeight: '800',
+        marginTop: 28,
+        marginLeft: 'auto',
+        marginRight: 'auto',
+        textDecorationLine: 'underline'
+    }
 })
 
 const textError = StyleSheet.create({

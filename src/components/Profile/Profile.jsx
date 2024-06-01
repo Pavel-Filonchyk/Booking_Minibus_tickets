@@ -2,10 +2,12 @@ import { useEffect, useState } from 'react'
 import { View, Text, StyleSheet, TouchableOpacity, Image, TextInput, ScrollView } from 'react-native'
 import { useSelector, useDispatch } from 'react-redux'
 import AsyncStorage from '@react-native-async-storage/async-storage'
+import AntDesign from '@expo/vector-icons/AntDesign'
 import PhoneInput from "react-native-phone-number-input"
 import _ from 'lodash'
 
 import Footer from '../Footer/Footer'
+import ModalWrapper from '../../wrapers/ModalWrarrer/ModalWrapper'
 import { getUser, deleteUser, getQueue, deleteQueue } from '../../core/actions/restUserTravelActions'
 import { sendCodeData, resetErrorCode } from '../../core/actions/authActions'
 
@@ -29,7 +31,8 @@ export default function Profile({ navigation }) {
     const [showBtn, setShowBtn] = useState(false)
     const [errorTextPhone, setErrorTextPhone] = useState(false)
     const [errorTextCode, setErrorTextCode] = useState(false)
-  
+    const [showModal, setShowModal] = useState(false)
+
     useEffect(() => {
         const getData = async () => {
             try {
@@ -91,7 +94,10 @@ export default function Profile({ navigation }) {
             } catch (e) {
                 console.log(e)
             }
-
+            setShowModal(true)
+            setTimeout(() => {
+                setShowModal(false)
+            },1500)
             setShowBtn(item => !item)
             setErrorTextCode(false)
             setCreateCode(null)
@@ -314,7 +320,15 @@ export default function Profile({ navigation }) {
                         </View>
                     </View>
             }
-            
+            <ModalWrapper showModal={showModal}>
+                <View style={styles.wrapTextModal}>
+                    <>
+                        <Text style={styles.textModal}>Успешно</Text>
+                        <Text style={styles.textModal}>изменены данные!</Text>
+                        <AntDesign name="smileo" size={48} color="white" style={{marginTop: 20}} />
+                    </>
+                </View>
+            </ModalWrapper>
             <Footer
                navigation={navigation} 
             />
@@ -544,6 +558,18 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
     },
+    wrapTextModal: {
+        height: '100%',
+        justifyContent: 'center',
+        alignItems: 'center'
+    },
+    textModal: {
+        fontWeight: '600',
+        fontSize: 31,
+        color: "white",
+        lineHeight: 50,
+        textAlign: 'center'
+    }
 })
 
 const textWithoutBooking = StyleSheet.create({

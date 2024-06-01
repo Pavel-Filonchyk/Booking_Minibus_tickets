@@ -16,8 +16,6 @@ export default function Order({ navigation }) {
     const choiceRoutes = useSelector(({getTravelsReducer: { choiceRoutes }}) => choiceRoutes)
     const costs = useSelector(({getTravelsReducer: { costs }}) => costs)
 
-    //const fullName = useSelector(({authReducer: { fullName }}) => fullName)
-    //const phoneNumber = useSelector(({authReducer: { phoneNumber }}) => phoneNumber)
     const [userData, setUserData] = useState('')
    
     const [wayStart, setSelectWayStart] = useState("")
@@ -167,12 +165,12 @@ export default function Order({ navigation }) {
                             choiceRoutes[0]?.freeSeats >= 3
                             ? 
                                 [
-                                    {label: '1', value: '1'},
-                                    {label: '2', value: '2'},
-                                    {label: '3', value: '3'}
+                                    {label: '1', value: 1},
+                                    {label: '2', value: 2},
+                                    {label: '3', value: 3}
                                 ]
                             : Array(choiceRoutes[0]?.freeSeats).fill(0).map((item, index) => {return (
-                                    {label: index +1, value: index +1}
+                                    {label: `${index +1}`, value: index +1}
                                 )})
                          }
                         style={{

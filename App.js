@@ -18,12 +18,12 @@ export default function App() {
     <Provider store={store}>
       <NavigationContainer>
         <Stack.Navigator initialRouteName="auth">
-          <Stack.Screen name="auth" component={Auth} options={{ headerShown: false }}/>
-          <Stack.Screen name="profile" component={Profile} options={{ headerShown: false }}/>
           <Stack.Screen name="main" component={Main} options={{ headerShown: false }}/>
           <Stack.Screen name="trips" component={Trips} options={{ headerShown: false }}/>
           <Stack.Screen name="order" component={Order} options={{ headerShown: false }}/>
           <Stack.Screen name="check" component={Check} options={{ headerShown: false }}/>
+          <Stack.Screen name="profile" component={Profile} options={{ headerShown: false }}/>
+          <Stack.Screen name="auth" component={Auth} options={{ headerShown: false }}/>
         </Stack.Navigator>
       </NavigationContainer>
     </Provider>

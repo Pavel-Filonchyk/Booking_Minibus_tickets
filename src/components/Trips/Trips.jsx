@@ -90,7 +90,7 @@ export default function Trips({ navigation }) {
                     {
                         travels?.map(item => {return (
                             <>
-                                <View style={styles.wrapBlockTrips} key={item.blockId}>
+                                <View style={styles.wrapBlockTrips} key={item?.blockId}>
                                     <View style={styles.blockTrips}>
                                         <Text style={styles.textTrips}>Отправление:</Text>
                                         <Text style={styles.getTextTrips}>
