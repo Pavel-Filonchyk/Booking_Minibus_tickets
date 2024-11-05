@@ -1,3 +1,5 @@
+https://play.google.com/store/apps/details?id=com.pavel.filonchyk.bookingtickets
+
 Privacy Policy (en)
 
 This privacy policy applies to the Booking minibus tickets (hereby referred to as "Application") for mobile devices that was created by Filonchyk Pavel (hereby referred to as "Service Provider") as a Free service. This service is intended for use "AS IS".
